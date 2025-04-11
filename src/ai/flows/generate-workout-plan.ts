@@ -27,7 +27,7 @@ const GenerateWorkoutPlanInputSchema = z.object({
 export type GenerateWorkoutPlanInput = z.infer<typeof GenerateWorkoutPlanInputSchema>;
 
 const GenerateWorkoutPlanOutputSchema = z.object({
-  workoutPlan: z.string().describe('A personalized workout plan for the user.'),
+  workoutPlan: z.string().describe('A personalized workout plan for the user in markdown format.'),
 });
 export type GenerateWorkoutPlanOutput = z.infer<typeof GenerateWorkoutPlanOutputSchema>;
 
@@ -53,15 +53,32 @@ const prompt = ai.definePrompt({
   },
   output: {
     schema: z.object({
-      workoutPlan: z.string().describe('A personalized workout plan for the user.'),
+      workoutPlan: z.string().describe('A personalized workout plan for the user in markdown format.'),
     }),
   },
-  prompt: `You are a personal trainer. You will generate a personalized workout plan for the user based on their age, weight, height, and fitness goals.
+  prompt: `You are a personal trainer. Generate a personalized workout plan for the user based on their age, weight, height, and fitness goals. The workout plan should be in markdown format.
 
   Age: {{{age}}}
   Weight: {{{weight}}} kg
   Height: {{{height}}} cm
   Fitness Goals: {{{fitnessGoals}}}
+
+  The workout plan should include a mix of strength and cardio exercises, with clear instructions on sets and reps. Each exercise should specify what type it is. The format must be Markdown. Start with a main heading like "Personalized Workout Plan"
+
+  Example:
+
+  # Personalized Workout Plan
+
+  ## Monday: Strength Training
+
+  - **Push-ups**: 3 sets of 10 reps (Strength)
+  - **Squats**: 3 sets of 12 reps (Strength)
+  - **Plank**: 3 sets, hold for 30 seconds (Strength)
+
+  ## Tuesday: Cardio
+
+  - **Running**: 30 minutes (Cardio)
+  - **Cycling**: 30 minutes (Cardio)
 
   Workout Plan:`,
 });

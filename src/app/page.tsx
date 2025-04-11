@@ -9,6 +9,9 @@ import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
 import {Textarea} from '@/components/ui/textarea';
 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
 export default function Home() {
   const [age, setAge] = useState<number | undefined>(undefined);
   const [weight, setWeight] = useState<number | undefined>(undefined);
@@ -45,34 +48,6 @@ export default function Home() {
     const result = await suggestRecipes(input);
     setRecipeSuggestions(result?.recipes);
   };
-
-  // Function to parse the workout plan and structure it into categories
-  const parseWorkoutPlan = (plan: string | undefined) => {
-    if (!plan) return {};
-
-    const workoutCategories: {[key: string]: string[]} = {
-      Cardio: [],
-      Strength: [],
-      Other: [],
-    };
-
-    const exercises = plan.split('\n').filter(exercise => exercise.trim() !== '');
-
-    exercises.forEach(exercise => {
-      const lowerCaseExercise = exercise.toLowerCase();
-      if (lowerCaseExercise.includes('cardio')) {
-        workoutCategories.Cardio.push(exercise);
-      } else if (lowerCaseExercise.includes('strength')) {
-        workoutCategories.Strength.push(exercise);
-      } else {
-        workoutCategories.Other.push(exercise);
-      }
-    });
-
-    return workoutCategories;
-  };
-
-  const workoutCategories = parseWorkoutPlan(workoutPlan);
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen py-4 bg-background antialiased">
@@ -161,20 +136,7 @@ export default function Home() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4">
-              {Object.entries(workoutCategories).map(([category, exercises]) => (
-                <div key={category} className="mb-4">
-                  <h3 className="text-md font-semibold text-primary tracking-tight">{category}</h3>
-                  <ul className="list-none pl-0">
-                    {exercises.map((exercise, index) => (
-                      <li key={index} className="mb-2 p-2 rounded-md bg-secondary/50">
-                        <p className="text-sm text-muted-foreground">{exercise}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{workoutPlan}</ReactMarkdown>
           </CardContent>
         </Card>
       )}
