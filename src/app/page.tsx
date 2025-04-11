@@ -8,6 +8,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/compo
 import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
 import {Textarea} from '@/components/ui/textarea';
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/ui/accordion';
 
 export default function Home() {
   const [age, setAge] = useState<number | undefined>(undefined);
@@ -45,6 +46,37 @@ export default function Home() {
     const result = await suggestRecipes(input);
     setRecipeSuggestions(result?.recipes);
   };
+
+  // Function to parse the workout plan and structure it into categories
+  const parseWorkoutPlan = (plan: string | undefined) => {
+    if (!plan) return {};
+
+    const workoutCategories: {[key: string]: string[]} = {
+      Cardio: [],
+      Strength: [],
+      Isometric: [],
+      Other: [],
+    };
+
+    const exercises = plan.split('\n').filter(exercise => exercise.trim() !== '');
+
+    exercises.forEach(exercise => {
+      const lowerCaseExercise = exercise.toLowerCase();
+      if (lowerCaseExercise.includes('cardio')) {
+        workoutCategories.Cardio.push(exercise);
+      } else if (lowerCaseExercise.includes('isometric')) {
+        workoutCategories.Isometric.push(exercise);
+      } else if (lowerCaseExercise.includes('strength')) {
+        workoutCategories.Strength.push(exercise);
+      } else {
+        workoutCategories.Other.push(exercise);
+      }
+    });
+
+    return workoutCategories;
+  };
+
+  const workoutCategories = parseWorkoutPlan(workoutPlan);
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen py-4 bg-background antialiased">
@@ -133,7 +165,20 @@ export default function Home() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p>{workoutPlan}</p>
+            <Accordion type="single" collapsible>
+              {Object.keys(workoutCategories).map((category) => (
+                <AccordionItem key={category} value={category}>
+                  <AccordionTrigger>{category}</AccordionTrigger>
+                  <AccordionContent>
+                    <ul className="list-disc pl-5">
+                      {workoutCategories[category].map((exercise, index) => (
+                        <li key={index} className="mb-1">{exercise}</li>
+                      ))}
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </CardContent>
         </Card>
       )}
