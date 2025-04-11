@@ -24,7 +24,7 @@ const GenerateWorkoutPlanInputSchema = z.object({
       'The fitness goals of the user, e.g., lose weight, gain muscle, improve endurance.'
     ),
   availableEquipment: z
-    .string()
+    .array(z.string())
     .describe(
       'The equipment available to the user, e.g., dumbbells, resistance bands, pull-up bar.'
     )
@@ -56,7 +56,7 @@ const prompt = ai.definePrompt({
           'The fitness goals of the user, e.g., lose weight, gain muscle, improve endurance.'
         ),
       availableEquipment: z
-        .string()
+        .array(z.string())
         .describe(
           'The equipment available to the user, e.g., dumbbells, resistance bands, pull-up bar.'
         )
@@ -76,7 +76,7 @@ const prompt = ai.definePrompt({
   Fitness Goals: {{{fitnessGoals}}}
   Available Equipment: {{{availableEquipment}}}
 
-  Generate a workout plan that uses ONLY the available equipment specified. If no equipment is specified, use only bodyweight exercises.
+  Generate a workout plan that uses ONLY the available equipment specified. If no equipment is specified, use only bodyweight exercises if no equipment is specified.
 
   The workout plan should be in markdown table format with columns: Exercise Name, Sets, and Reps/Time.
   Each day should have a mix of strength and cardio exercises, with clear instructions on sets and reps.

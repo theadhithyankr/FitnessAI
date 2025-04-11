@@ -9,6 +9,7 @@ import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
 import {Textarea} from '@/components/ui/textarea';
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/ui/accordion';
+import {cn} from '@/lib/utils';
 
 export default function Home() {
   const [age, setAge] = useState<number | undefined>(undefined);
@@ -20,7 +21,8 @@ export default function Home() {
     {name: string; ingredients: string; instructions: string}[] | undefined
   >(undefined);
   const [dietaryPreferences, setDietaryPreferences] = useState<string>('');
-  const [availableEquipment, setAvailableEquipment] = useState<string>('');
+  const [availableEquipment, setAvailableEquipment] = useState<string[]>([]);
+  const [newEquipment, setNewEquipment] = useState<string>('');
 
   const handleGenerateWorkoutPlan = async () => {
     if (age === undefined || weight === undefined || height === undefined) {
@@ -63,6 +65,17 @@ export default function Home() {
   };
 
   const workoutDays = splitWorkoutPlan(workoutPlan);
+
+  const handleAddEquipment = () => {
+    if (newEquipment && !availableEquipment.includes(newEquipment)) {
+      setAvailableEquipment([...availableEquipment, newEquipment]);
+      setNewEquipment('');
+    }
+  };
+
+  const handleRemoveEquipment = (equipmentToRemove: string) => {
+    setAvailableEquipment(availableEquipment.filter(equipment => equipment !== equipmentToRemove));
+  };
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen py-4 bg-background antialiased">
@@ -115,15 +128,40 @@ export default function Home() {
               className="bg-white shadow-sm rounded-lg px-4 py-2 text-lg"
             />
           </div>
+
           <div className="grid w-full gap-2">
             <Label htmlFor="availableEquipment">Available Equipment</Label>
-            <Input
-              id="availableEquipment"
-              type="text"
-              placeholder="Dumbbells, Resistance Bands, Pull-up Bar, etc."
-              onChange={e => setAvailableEquipment(e.target.value)}
-              className="bg-white shadow-sm rounded-lg px-4 py-2 text-lg"
-            />
+            <div className="flex items-center space-x-2">
+              <Input
+                id="newEquipment"
+                type="text"
+                placeholder="Add equipment and press Enter"
+                value={newEquipment}
+                onChange={e => setNewEquipment(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddEquipment();
+                  }
+                }}
+                className="bg-white shadow-sm rounded-lg px-4 py-2 text-lg"
+              />
+              <Button type="button" variant="secondary" onClick={handleAddEquipment}>
+                Add
+              </Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {availableEquipment.map(equipment => (
+                <div
+                  key={equipment}
+                  className="bg-secondary text-secondary-foreground rounded-full px-3 py-1 text-sm font-semibold flex items-center space-x-1"
+                >
+                  <span>{equipment}</span>
+                  <Button variant="ghost" size="icon" onClick={() => handleRemoveEquipment(equipment)}>
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
         </CardContent>
       </Card>
