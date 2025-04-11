@@ -10,6 +10,7 @@ import {Label} from '@/components/ui/label';
 import {Textarea} from '@/components/ui/textarea';
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/ui/accordion';
 import {cn} from '@/lib/utils';
+import {Trash2} from 'lucide-react';
 
 export default function Home() {
   const [age, setAge] = useState<number | undefined>(undefined);
@@ -78,10 +79,10 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen py-4 bg-background antialiased">
-      <h1 className="text-3xl font-bold mb-4 text-primary tracking-tight">FitPlan AI</h1>
+    <div className="flex flex-col items-center justify-start min-h-screen py-4 bg-black antialiased">
+      <h1 className="text-3xl font-bold mb-4 text-white tracking-tight">FitPlan AI</h1>
 
-      <Card className="w-full max-w-md mb-8 shadow-md rounded-lg border-0">
+      <Card className="w-full max-w-md mb-8 shadow-lg rounded-xl p-6">
         <CardHeader>
           <CardTitle className="text-lg font-semibold tracking-tight">User Information</CardTitle>
           <CardDescription className="text-muted-foreground">
@@ -90,47 +91,57 @@ export default function Home() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid w-full gap-2">
-            <Label htmlFor="age">Age</Label>
+            <Label htmlFor="age" className="text-lg font-semibold">
+              Age
+            </Label>
             <Input
               id="age"
               type="number"
               placeholder="Enter your age"
               onChange={e => setAge(Number(e.target.value))}
-              className="bg-white shadow-sm rounded-lg px-4 py-2 text-lg"
+              className="bg-black text-white border border-white focus:border-teal-500 shadow-sm rounded-lg px-4 py-2"
             />
           </div>
           <div className="grid w-full gap-2">
-            <Label htmlFor="weight">Weight (kg)</Label>
+            <Label htmlFor="weight" className="text-lg font-semibold">
+              Weight (kg)
+            </Label>
             <Input
               id="weight"
               type="number"
               placeholder="Enter your weight in kg"
               onChange={e => setWeight(Number(e.target.value))}
-              className="bg-white shadow-sm rounded-lg px-4 py-2 text-lg"
+              className="bg-black text-white border border-white focus:border-teal-500 shadow-sm rounded-lg px-4 py-2"
             />
           </div>
           <div className="grid w-full gap-2">
-            <Label htmlFor="height">Height (cm)</Label>
+            <Label htmlFor="height" className="text-lg font-semibold">
+              Height (cm)
+            </Label>
             <Input
               id="height"
               type="number"
               placeholder="Enter your height in cm"
               onChange={e => setHeight(Number(e.target.value))}
-              className="bg-white shadow-sm rounded-lg px-4 py-2 text-lg"
+              className="bg-black text-white border border-white focus:border-teal-500 shadow-sm rounded-lg px-4 py-2"
             />
           </div>
           <div className="grid w-full gap-2">
-            <Label htmlFor="fitnessGoals">Fitness Goals</Label>
+            <Label htmlFor="fitnessGoals" className="text-lg font-semibold">
+              Fitness Goals
+            </Label>
             <Textarea
               id="fitnessGoals"
               placeholder="Enter your fitness goals"
               onChange={e => setFitnessGoals(e.target.value)}
-              className="bg-white shadow-sm rounded-lg px-4 py-2 text-lg"
+              className="bg-black text-white border border-white placeholder-gray-400 focus:border-teal-500 shadow-sm rounded-lg px-4 py-2"
             />
           </div>
 
           <div className="grid w-full gap-2">
-            <Label htmlFor="availableEquipment">Available Equipment</Label>
+            <Label htmlFor="availableEquipment" className="text-lg font-semibold">
+              Available Equipment
+            </Label>
             <div className="flex items-center space-x-2">
               <Input
                 id="newEquipment"
@@ -144,7 +155,7 @@ export default function Home() {
                     handleAddEquipment();
                   }
                 }}
-                className="bg-white shadow-sm rounded-lg px-4 py-2 text-lg"
+                className="bg-black text-white border border-white focus:border-teal-500 shadow-sm rounded-lg px-4 py-2"
               />
               <Button type="button" variant="secondary" onClick={handleAddEquipment}>
                 Add
@@ -158,6 +169,7 @@ export default function Home() {
                 >
                   <span>{equipment}</span>
                   <Button variant="ghost" size="icon" onClick={() => handleRemoveEquipment(equipment)}>
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               ))}
@@ -166,7 +178,7 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      <Card className="w-full max-w-md mb-8 shadow-md rounded-lg border-0">
+      <Card className="w-full max-w-md mb-8 shadow-lg rounded-xl p-6">
         <CardHeader>
           <CardTitle className="text-lg font-semibold tracking-tight">Recipe Preferences</CardTitle>
           <CardDescription className="text-muted-foreground">
@@ -175,12 +187,14 @@ export default function Home() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid w-full gap-2">
-            <Label htmlFor="dietaryPreferences">Dietary Preferences</Label>
+            <Label htmlFor="dietaryPreferences" className="text-lg font-semibold">
+              Dietary Preferences
+            </Label>
             <Textarea
               id="dietaryPreferences"
               placeholder="Enter your dietary preferences"
               onChange={e => setDietaryPreferences(e.target.value)}
-              className="bg-white shadow-sm rounded-lg px-4 py-2 text-lg"
+              className="bg-black text-white border border-white placeholder-gray-400 focus:border-teal-500 shadow-sm rounded-lg px-4 py-2"
             />
           </div>
         </CardContent>
@@ -204,7 +218,7 @@ export default function Home() {
       </div>
 
       {workoutPlan && (
-        <Card className="w-full max-w-md mt-8 shadow-md rounded-lg border-0">
+        <Card className="w-full max-w-md mt-8 shadow-lg rounded-xl p-6">
           <CardHeader>
             <CardTitle className="text-lg font-semibold tracking-tight">Workout Plan</CardTitle>
             <CardDescription className="text-muted-foreground">
@@ -259,7 +273,7 @@ export default function Home() {
       )}
 
       {recipeSuggestions && (
-        <Card className="w-full max-w-md mt-8 shadow-md rounded-lg border-0">
+        <Card className="w-full max-w-md mt-8 shadow-lg rounded-xl p-6">
           <CardHeader>
             <CardTitle className="text-lg font-semibold tracking-tight">Recipe Suggestions</CardTitle>
             <CardDescription className="text-muted-foreground">
