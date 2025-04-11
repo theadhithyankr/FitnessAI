@@ -54,7 +54,6 @@ export default function Home() {
     const workoutCategories: {[key: string]: string[]} = {
       Cardio: [],
       Strength: [],
-      Isometric: [],
       Other: [],
     };
 
@@ -64,8 +63,6 @@ export default function Home() {
       const lowerCaseExercise = exercise.toLowerCase();
       if (lowerCaseExercise.includes('cardio')) {
         workoutCategories.Cardio.push(exercise);
-      } else if (lowerCaseExercise.includes('isometric')) {
-        workoutCategories.Isometric.push(exercise);
       } else if (lowerCaseExercise.includes('strength')) {
         workoutCategories.Strength.push(exercise);
       } else {
