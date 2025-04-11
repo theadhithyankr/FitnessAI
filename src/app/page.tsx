@@ -33,6 +33,7 @@ export default function Home() {
       weight: weight,
       height: height,
       fitnessGoals: fitnessGoals,
+      availableEquipment: availableEquipment,
     };
 
     const result = await generateWorkoutPlan(input);

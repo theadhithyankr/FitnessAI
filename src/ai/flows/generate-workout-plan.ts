@@ -23,6 +23,12 @@ const GenerateWorkoutPlanInputSchema = z.object({
     .describe(
       'The fitness goals of the user, e.g., lose weight, gain muscle, improve endurance.'
     ),
+  availableEquipment: z
+    .string()
+    .describe(
+      'The equipment available to the user, e.g., dumbbells, resistance bands, pull-up bar.'
+    )
+    .optional(),
 });
 export type GenerateWorkoutPlanInput = z.infer<typeof GenerateWorkoutPlanInputSchema>;
 
@@ -49,6 +55,12 @@ const prompt = ai.definePrompt({
         .describe(
           'The fitness goals of the user, e.g., lose weight, gain muscle, improve endurance.'
         ),
+      availableEquipment: z
+        .string()
+        .describe(
+          'The equipment available to the user, e.g., dumbbells, resistance bands, pull-up bar.'
+        )
+        .optional(),
     }),
   },
   output: {
@@ -56,14 +68,16 @@ const prompt = ai.definePrompt({
       workoutPlan: z.string().describe('A personalized workout plan for the user in markdown format.'),
     }),
   },
-  prompt: `You are a personal trainer. Generate a personalized workout plan for the user based on their age, weight, height, and fitness goals. The workout plan should be in markdown format, divided into 7 days.
+  prompt: `You are a personal trainer. Generate a personalized workout plan for the user based on their age, weight, height, fitness goals, and available equipment. The workout plan should be in markdown format, divided into 7 days.
 
   Age: {{{age}}}
   Weight: {{{weight}}} kg
   Height: {{{height}}} cm
   Fitness Goals: {{{fitnessGoals}}}
+  Available Equipment: {{{availableEquipment}}}
 
-  Generate a workout plan.
+  Generate a workout plan that uses ONLY the available equipment specified. If no equipment is specified, use only bodyweight exercises.
+
   The workout plan should be in markdown table format with columns: Exercise Name, Sets, and Reps/Time.
   Each day should have a mix of strength and cardio exercises, with clear instructions on sets and reps.
 
