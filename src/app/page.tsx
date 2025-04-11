@@ -10,9 +10,6 @@ import {Label} from '@/components/ui/label';
 import {Textarea} from '@/components/ui/textarea';
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/ui/accordion';
 
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-
 export default function Home() {
   const [age, setAge] = useState<number | undefined>(undefined);
   const [weight, setWeight] = useState<number | undefined>(undefined);
@@ -155,9 +152,31 @@ export default function Home() {
             <Accordion type="single" collapsible>
               {workoutDays.map((day, index) => (
                 <AccordionItem key={index} value={`day-${index}`}>
-                  <AccordionTrigger>{day.title}</AccordionTrigger>
+                  <AccordionTrigger>
+                    <h3 className="text-md font-semibold text-primary tracking-tight">{day.title}</h3>
+                  </AccordionTrigger>
                   <AccordionContent>
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{day.content}</ReactMarkdown>
+                    <table className="w-full rounded-lg border border-border text-sm">
+                      <thead>
+                        <tr className="bg-secondary">
+                          <th className="p-2 text-left font-semibold">Exercise Name</th>
+                          <th className="p-2 text-left font-semibold">Sets</th>
+                          <th className="p-2 text-left font-semibold">Reps/Time</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {day.content.split('\n').filter(line => line.includes('|')).slice(2).map((line, lineIndex) => {
+                          const [exercise, sets, reps] = line.split('|').map(item => item.trim()).filter(item => item !== '');
+                          return (
+                            <tr key={lineIndex} className={`${lineIndex % 2 === 0 ? 'bg-muted' : ''}`}>
+                              <td className="p-2">{exercise}</td>
+                              <td className="p-2">{sets}</td>
+                              <td className="p-2">{reps}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </AccordionContent>
                 </AccordionItem>
               ))}
