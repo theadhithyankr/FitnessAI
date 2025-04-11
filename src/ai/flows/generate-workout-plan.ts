@@ -1,4 +1,3 @@
-// Use server directive is required for Genkit flows.
 'use server';
 /**
  * @fileOverview This file defines a Genkit flow for generating a personalized workout plan based on user input.
