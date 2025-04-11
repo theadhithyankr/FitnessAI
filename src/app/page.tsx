@@ -20,6 +20,7 @@ export default function Home() {
     {name: string; ingredients: string; instructions: string}[] | undefined
   >(undefined);
   const [dietaryPreferences, setDietaryPreferences] = useState<string>('');
+  const [availableEquipment, setAvailableEquipment] = useState<string>('');
 
   const handleGenerateWorkoutPlan = async () => {
     if (age === undefined || weight === undefined || height === undefined) {
@@ -80,7 +81,8 @@ export default function Home() {
               id="age"
               type="number"
               placeholder="Enter your age"
-              onChange={(e) => setAge(Number(e.target.value))}
+              onChange={e => setAge(Number(e.target.value))}
+              className="bg-white shadow-sm rounded-lg px-4 py-2 text-lg"
             />
           </div>
           <div className="grid w-full gap-2">
@@ -89,7 +91,8 @@ export default function Home() {
               id="weight"
               type="number"
               placeholder="Enter your weight in kg"
-              onChange={(e) => setWeight(Number(e.target.value))}
+              onChange={e => setWeight(Number(e.target.value))}
+              className="bg-white shadow-sm rounded-lg px-4 py-2 text-lg"
             />
           </div>
           <div className="grid w-full gap-2">
@@ -98,7 +101,8 @@ export default function Home() {
               id="height"
               type="number"
               placeholder="Enter your height in cm"
-              onChange={(e) => setHeight(Number(e.target.value))}
+              onChange={e => setHeight(Number(e.target.value))}
+              className="bg-white shadow-sm rounded-lg px-4 py-2 text-lg"
             />
           </div>
           <div className="grid w-full gap-2">
@@ -106,7 +110,18 @@ export default function Home() {
             <Textarea
               id="fitnessGoals"
               placeholder="Enter your fitness goals"
-              onChange={(e) => setFitnessGoals(e.target.value)}
+              onChange={e => setFitnessGoals(e.target.value)}
+              className="bg-white shadow-sm rounded-lg px-4 py-2 text-lg"
+            />
+          </div>
+          <div className="grid w-full gap-2">
+            <Label htmlFor="availableEquipment">Available Equipment</Label>
+            <Input
+              id="availableEquipment"
+              type="text"
+              placeholder="Dumbbells, Resistance Bands, Pull-up Bar, etc."
+              onChange={e => setAvailableEquipment(e.target.value)}
+              className="bg-white shadow-sm rounded-lg px-4 py-2 text-lg"
             />
           </div>
         </CardContent>
@@ -125,17 +140,26 @@ export default function Home() {
             <Textarea
               id="dietaryPreferences"
               placeholder="Enter your dietary preferences"
-              onChange={(e) => setDietaryPreferences(e.target.value)}
+              onChange={e => setDietaryPreferences(e.target.value)}
+              className="bg-white shadow-sm rounded-lg px-4 py-2 text-lg"
             />
           </div>
         </CardContent>
       </Card>
 
       <div className="flex gap-4">
-        <Button variant="accent" onClick={handleGenerateWorkoutPlan}>
+        <Button
+          variant="accent"
+          onClick={handleGenerateWorkoutPlan}
+          className="hover:shadow-lg hover:bg-teal-600"
+        >
           Generate Workout Plan
         </Button>
-        <Button variant="accent" onClick={handleSuggestRecipes}>
+        <Button
+          variant="accent"
+          onClick={handleSuggestRecipes}
+          className="hover:shadow-lg hover:bg-teal-600"
+        >
           Suggest Recipes
         </Button>
       </div>
@@ -165,16 +189,26 @@ export default function Home() {
                         </tr>
                       </thead>
                       <tbody>
-                        {day.content.split('\n').filter(line => line.includes('|')).slice(2).map((line, lineIndex) => {
-                          const [exercise, sets, reps] = line.split('|').map(item => item.trim()).filter(item => item !== '');
-                          return (
-                            <tr key={lineIndex} className={`${lineIndex % 2 === 0 ? 'bg-muted' : ''}`}>
-                              <td className="p-2">{exercise}</td>
-                              <td className="p-2">{sets}</td>
-                              <td className="p-2">{reps}</td>
-                            </tr>
-                          );
-                        })}
+                        {day.content
+                          .split('\n')
+                          .filter(line => line.includes('|'))
+                          .slice(2)
+                          .map((line, lineIndex) => {
+                            const [exercise, sets, reps] = line
+                              .split('|')
+                              .map(item => item.trim())
+                              .filter(item => item !== '');
+                            return (
+                              <tr
+                                key={lineIndex}
+                                className={`${lineIndex % 2 === 0 ? 'bg-muted' : ''}`}
+                              >
+                                <td className="p-2">{exercise}</td>
+                                <td className="p-2">{sets}</td>
+                                <td className="p-2">{reps}</td>
+                              </tr>
+                            );
+                          })}
                       </tbody>
                     </table>
                   </AccordionContent>
