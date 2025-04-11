@@ -8,7 +8,6 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/compo
 import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
 import {Textarea} from '@/components/ui/textarea';
-import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/ui/accordion';
 
 export default function Home() {
   const [age, setAge] = useState<number | undefined>(undefined);
@@ -162,20 +161,20 @@ export default function Home() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Accordion type="single" collapsible>
-              {Object.keys(workoutCategories).map((category) => (
-                <AccordionItem key={category} value={category}>
-                  <AccordionTrigger>{category}</AccordionTrigger>
-                  <AccordionContent>
-                    <ul className="list-disc pl-5">
-                      {workoutCategories[category].map((exercise, index) => (
-                        <li key={index} className="mb-1">{exercise}</li>
-                      ))}
-                    </ul>
-                  </AccordionContent>
-                </AccordionItem>
+            <div className="grid gap-4">
+              {Object.entries(workoutCategories).map(([category, exercises]) => (
+                <div key={category} className="mb-4">
+                  <h3 className="text-md font-semibold text-primary tracking-tight">{category}</h3>
+                  <ul className="list-none pl-0">
+                    {exercises.map((exercise, index) => (
+                      <li key={index} className="mb-2 p-2 rounded-md bg-secondary/50">
+                        <p className="text-sm text-muted-foreground">{exercise}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
-            </Accordion>
+            </div>
           </CardContent>
         </Card>
       )}
