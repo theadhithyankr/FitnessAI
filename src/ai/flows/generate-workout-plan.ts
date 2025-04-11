@@ -56,7 +56,7 @@ const prompt = ai.definePrompt({
       workoutPlan: z.string().describe('A personalized workout plan for the user in markdown format.'),
     }),
   },
-  prompt: `You are a personal trainer. Generate a personalized workout plan for the user based on their age, weight, height, and fitness goals. The workout plan should be in markdown format.
+  prompt: `You are a personal trainer. Generate a personalized workout plan for the user based on their age, weight, height, and fitness goals. The workout plan should be in markdown format, divided into 7 days.
 
   Age: {{{age}}}
   Weight: {{{weight}}} kg
@@ -64,18 +64,26 @@ const prompt = ai.definePrompt({
   Fitness Goals: {{{fitnessGoals}}}
 
   Generate a workout plan.
-  The workout plan should be in markdown table format with columns: Exercise Name, Sets, Reps/Time, and Type.
-  Ensure the workout plan includes a mix of strength and cardio exercises, with clear instructions on sets and reps. Each exercise should specify what type it is (strength, cardio, etc.).
+  The workout plan should be in markdown table format with columns: Exercise Name, Sets, and Reps/Time.
+  Each day should have a mix of strength and cardio exercises, with clear instructions on sets and reps.
 
   Example:
 
   # Personalized Workout Plan
 
-  | Exercise Name | Sets | Reps/Time | Type     |
-  | :------------ | :--- | :-------- | :------- |
-  | Push-ups      | 3    | 10        | Strength |
-  | Squats        | 3    | 12        | Strength |
-  | Running       | 1    | 30 minutes| Cardio   |
+  ## Day 1:
+  | Exercise Name | Sets | Reps/Time |
+  | :------------ | :--- | :-------- |
+  | Push-ups      | 3    | 10        |
+  | Squats        | 3    | 12        |
+  | Running       | 1    | 30 minutes|
+
+  ## Day 2:
+  | Exercise Name | Sets | Reps/Time |
+  | :------------ | :--- | :-------- |
+  | Pull-ups      | 3    | 8         |
+  | Lunges        | 3    | 10 each leg |
+  | Swimming      | 1    | 45 minutes|
 
   Workout Plan:`,
 });

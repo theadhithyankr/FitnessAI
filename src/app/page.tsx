@@ -8,6 +8,7 @@ import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/compo
 import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
 import {Textarea} from '@/components/ui/textarea';
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/ui/accordion';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -48,6 +49,21 @@ export default function Home() {
     const result = await suggestRecipes(input);
     setRecipeSuggestions(result?.recipes);
   };
+
+  const splitWorkoutPlan = (plan: string | undefined) => {
+    if (!plan) return [];
+
+    const days = plan.split('## ').filter(day => day.startsWith('Day'));
+    return days.map(day => {
+      const [title, ...content] = day.split('\n');
+      return {
+        title: '## ' + title.trim(),
+        content: content.join('\n').trim(),
+      };
+    });
+  };
+
+  const workoutDays = splitWorkoutPlan(workoutPlan);
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen py-4 bg-background antialiased">
@@ -136,7 +152,16 @@ export default function Home() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{workoutPlan}</ReactMarkdown>
+            <Accordion type="single" collapsible>
+              {workoutDays.map((day, index) => (
+                <AccordionItem key={index} value={`day-${index}`}>
+                  <AccordionTrigger>{day.title}</AccordionTrigger>
+                  <AccordionContent>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{day.content}</ReactMarkdown>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </CardContent>
         </Card>
       )}
