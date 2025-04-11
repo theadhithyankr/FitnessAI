@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {GenerateWorkoutPlanInput, generateWorkoutPlan} from '@/ai/flows/generate-workout-plan';
 import {SuggestRecipesInput, suggestRecipes} from '@/ai/flows/suggest-recipes';
 import {Button} from '@/components/ui/button';
@@ -10,7 +10,13 @@ import {Label} from '@/components/ui/label';
 import {Textarea} from '@/components/ui/textarea';
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from '@/components/ui/accordion';
 import {cn} from '@/lib/utils';
-import {Trash2} from 'lucide-react';
+import {Trash2, Save, Edit} from 'lucide-react';
+import {initializeApp} from 'firebase/app';
+import {getFirestore, collection, addDoc, getDocs, deleteDoc, doc} from 'firebase/firestore';
+import {firebaseConfig} from '@/lib/firebase-config';
+
+initializeApp(firebaseConfig);
+const db = getFirestore();
 
 export default function Home() {
   const [age, setAge] = useState<number | undefined>(undefined);
@@ -24,6 +30,18 @@ export default function Home() {
   const [dietaryPreferences, setDietaryPreferences] = useState<string>('');
   const [availableEquipment, setAvailableEquipment] = useState<string[]>([]);
   const [newEquipment, setNewEquipment] = useState<string>('');
+  const [savedWorkouts, setSavedWorkouts] = useState<any[]>([]);
+  const [workoutTitle, setWorkoutTitle] = useState<string>('');
+
+  useEffect(() => {
+    loadSavedWorkouts();
+  }, []);
+
+  const loadSavedWorkouts = async () => {
+    const querySnapshot = await getDocs(collection(db, 'workouts'));
+    const workouts = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+    setSavedWorkouts(workouts);
+  };
 
   const handleGenerateWorkoutPlan = async () => {
     if (age === undefined || weight === undefined || height === undefined) {
@@ -76,6 +94,50 @@ export default function Home() {
 
   const handleRemoveEquipment = (equipmentToRemove: string) => {
     setAvailableEquipment(availableEquipment.filter(equipment => equipment !== equipmentToRemove));
+  };
+
+  const handleSaveWorkout = async () => {
+    if (!workoutPlan) {
+      alert('No workout plan to save.');
+      return;
+    }
+
+    const workoutData = {
+      title: workoutTitle || 'Untitled Workout',
+      generatedDate: new Date().toISOString(),
+      days: workoutDays.map(day => ({
+        title: day.title,
+        content: day.content,
+      })),
+      userData: {
+        age: age,
+        weight: weight,
+        height: height,
+        fitnessGoals: fitnessGoals,
+        availableEquipment: availableEquipment,
+      },
+    };
+
+    try {
+      await addDoc(collection(db, 'workouts'), workoutData);
+      alert('Workout saved successfully!');
+      setWorkoutTitle('');
+      loadSavedWorkouts();
+    } catch (error) {
+      console.error('Error saving workout:', error);
+      alert('Failed to save workout.');
+    }
+  };
+
+  const handleDeleteWorkout = async (workoutId: string) => {
+    try {
+      await deleteDoc(doc(db, 'workouts', workoutId));
+      alert('Workout deleted successfully!');
+      loadSavedWorkouts();
+    } catch (error) {
+      console.error('Error deleting workout:', error);
+      alert('Failed to delete workout.');
+    }
   };
 
   return (
@@ -226,6 +288,13 @@ export default function Home() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            <Input
+              type="text"
+              placeholder="Workout Title"
+              value={workoutTitle}
+              onChange={e => setWorkoutTitle(e.target.value)}
+              className="mb-4 bg-black text-white border border-white focus:border-teal-500 shadow-sm rounded-lg px-4 py-2"
+            />
             <Accordion type="single" collapsible>
               {workoutDays.map((day, index) => (
                 <AccordionItem key={index} value={`day-${index}`}>
@@ -268,6 +337,10 @@ export default function Home() {
                 </AccordionItem>
               ))}
             </Accordion>
+            <Button variant="primary" onClick={handleSaveWorkout}>
+              <Save className="mr-2 h-4 w-4" />
+              Save Workout
+            </Button>
           </CardContent>
         </Card>
       )}
@@ -293,6 +366,79 @@ export default function Home() {
           </CardContent>
         </Card>
       )}
+
+      <Card className="w-full max-w-md mt-8 shadow-lg rounded-xl p-6">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold tracking-tight">Saved Workouts</CardTitle>
+          <CardDescription className="text-muted-foreground">
+            Manage your saved workout plans.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {savedWorkouts.map(workout => (
+            <Card key={workout.id} className="mb-4">
+              <CardHeader>
+                <CardTitle className="text-md font-semibold">{workout.title}</CardTitle>
+                <CardDescription className="text-sm">
+                  Generated on: {new Date(workout.generatedDate).toLocaleDateString()}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Accordion type="single" collapsible>
+                  {workout.days.map((day, index) => (
+                    <AccordionItem key={index} value={`saved-day-${index}`}>
+                      <AccordionTrigger>
+                        <h3 className="text-sm font-medium text-primary">{day.title}</h3>
+                      </AccordionTrigger>
+                      <AccordionContent>
+                        <table className="w-full rounded-lg border border-border text-sm">
+                          <thead>
+                            <tr className="bg-secondary">
+                              <th className="p-2 text-left font-semibold">Exercise Name</th>
+                              <th className="p-2 text-left font-semibold">Sets</th>
+                              <th className="p-2 text-left font-semibold">Reps/Time</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {day.content
+                              .split('\n')
+                              .filter(line => line.includes('|'))
+                              .slice(2)
+                              .map((line, lineIndex) => {
+                                const [exercise, sets, reps] = line
+                                  .split('|')
+                                  .map(item => item.trim())
+                                  .filter(item => item !== '');
+                                return (
+                                  <tr
+                                    key={lineIndex}
+                                    className={`${lineIndex % 2 === 0 ? 'bg-muted' : ''}`}
+                                  >
+                                    <td className="p-2">{exercise}</td>
+                                    <td className="p-2">{sets}</td>
+                                    <td className="p-2">{reps}</td>
+                                  </tr>
+                                );
+                              })}
+                          </tbody>
+                        </table>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+                <div className="flex justify-end mt-4">
+                  <Button variant="ghost" size="icon" onClick={() => handleDeleteWorkout(workout.id)}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon">
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
 }
