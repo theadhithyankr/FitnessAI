@@ -63,22 +63,19 @@ const prompt = ai.definePrompt({
   Height: {{{height}}} cm
   Fitness Goals: {{{fitnessGoals}}}
 
-  The workout plan should include a mix of strength and cardio exercises, with clear instructions on sets and reps. Each exercise should specify what type it is. The format must be Markdown. Start with a main heading like "Personalized Workout Plan"
+  Generate a workout plan.
+  The workout plan should be in markdown table format with columns: Exercise Name, Sets, Reps/Time, and Type.
+  Ensure the workout plan includes a mix of strength and cardio exercises, with clear instructions on sets and reps. Each exercise should specify what type it is (strength, cardio, etc.).
 
   Example:
 
   # Personalized Workout Plan
 
-  ## Monday: Strength Training
-
-  - **Push-ups**: 3 sets of 10 reps (Strength)
-  - **Squats**: 3 sets of 12 reps (Strength)
-  - **Plank**: 3 sets, hold for 30 seconds (Strength)
-
-  ## Tuesday: Cardio
-
-  - **Running**: 30 minutes (Cardio)
-  - **Cycling**: 30 minutes (Cardio)
+  | Exercise Name | Sets | Reps/Time | Type     |
+  | :------------ | :--- | :-------- | :------- |
+  | Push-ups      | 3    | 10        | Strength |
+  | Squats        | 3    | 12        | Strength |
+  | Running       | 1    | 30 minutes| Cardio   |
 
   Workout Plan:`,
 });
