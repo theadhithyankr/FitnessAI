@@ -1,6 +1,4 @@
-Sure — here’s a clean, updated `README.md` for your **FitPlan AI** project without the file structure section:
 
----
 
 # 💪 FitPlan AI
 
